@@ -1,0 +1,183 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+generator markdown {
+  provider = "prisma-markdown"
+  output   = "../docs/diagrama.md"
+  title    = "Farol"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Country {
+  isoCode String @id @map("iso_code")
+  name    String
+
+  regions           Region[]
+  hostVerifications HostVerification[]
+
+  @@map("countries")
+}
+
+model Region {
+  id          String @id @default(uuid()) @db.Uuid
+  countryCode String @map("country_code")
+  geonameId   Int    @unique @map("geoname_id")
+  name        String
+
+  cities City[]
+
+  countries Country @relation(fields: [countryCode], references: [isoCode])
+
+  @@map("regions")
+}
+
+model City {
+  id         String @id @default(uuid()) @db.Uuid
+  regionId   String @map("region_id") @db.Uuid
+  geonameId  Int    @unique @map("geoname_id")
+  name       String
+  population Int?
+
+  regions Region @relation(fields: [regionId], references: [id])
+
+  emigrantDestinations EmigrantProfile[] @relation("DestinationCity")
+  emigrantCurrents     EmigrantProfile[] @relation("CurrentCity")
+  hostProfiles         HostProfile[]
+
+  @@map("cities")
+}
+
+enum Role {
+  USER        @map("user")
+  ADMIN       @map("admin")
+  SUPER_ADMIN @map("super_admin")
+
+  @@map("role")
+}
+
+model User {
+  id               String    @id @db.Uuid
+  email            String    @unique
+  firstName        String?   @map("first_name")
+  middleNames      String?   @map("middle_names")
+  lastName         String?   @map("last_name")
+  nickname         String?
+  role             Role      @default(USER)
+  adultConfirmedAt DateTime? @map("adult_confirmed_at")
+  privacyConsentAt DateTime? @map("privacy_consent_at")
+  createdAt        DateTime  @default(now()) @map("created_at")
+
+  draft                 OnboardingDraft?
+  emigrantProfile       EmigrantProfile?
+  hostProfile           HostProfile?
+  reviewedVerifications HostVerification[]
+
+  @@map("users")
+}
+
+enum OnboardingRole {
+  EMIGRANT @map("emigrant")
+  HOST     @map("host")
+
+  @@map("onboarding_role")
+}
+
+model OnboardingDraft {
+  userId    String          @id @map("user_id") @db.Uuid
+  role      OnboardingRole?
+  step      Int
+  data      Json
+  expiresAt DateTime        @map("expires_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("onboarding_drafts")
+}
+
+enum EmigrantPurpose {
+  WORK  @map("work")
+  STUDY @map("study")
+
+  @@map("emigrant_purpose")
+}
+
+enum EmigrantState {
+  ESTABLISHED @map("established")
+  ON_THE_WAY  @map("on_the_way")
+
+  @@map("emigrant_state")
+}
+
+model EmigrantProfile {
+  userId            String          @id @map("user_id") @db.Uuid
+  destinationCityId String          @map("destination_city_id") @db.Uuid
+  currentCityId     String          @map("current_city_id") @db.Uuid
+  purpose           EmigrantPurpose
+  expectedDate      DateTime?       @map("expected_date") @db.Date
+  state             EmigrantState   @default(ON_THE_WAY)
+
+  user User @relation(fields: [userId], references: [id])
+
+  destinationCity City @relation("DestinationCity", fields: [destinationCityId], references: [id])
+  currentCity     City @relation("CurrentCity", fields: [currentCityId], references: [id])
+
+  @@map("emigrant_profiles")
+}
+
+model HostProfile {
+  userId String @id @map("user_id") @db.Uuid
+  cityId String @map("city_id") @db.Uuid
+
+  user User @relation(fields: [userId], references: [id])
+  city City @relation(fields: [cityId], references: [id])
+
+  hostVerifications HostVerification[]
+
+  @@map("host_profiles")
+}
+
+enum HostStatus {
+  PENDING  @map("pending")
+  APPROVED @map("approved")
+  REJECTED @map("rejected")
+
+  @@map("host_status")
+}
+
+enum DocumentType {
+  NATIONAL_ID @map("national_id")
+  PASSPORT    @map("passport")
+
+  @@map("document_types")
+}
+
+model HostVerification {
+  hostId             String       @id @map("host_id") @db.Uuid
+  status             HostStatus   @default(PENDING)
+  documentType       DocumentType @map("document_type")
+  issuingCountry     String       @map("issuing_country")
+  documentNumber     String?      @map("document_number")
+  documentImagePath  String?      @map("document_image_path")
+  residenceProofPath String?      @map("residence_proof_path")
+  documentHash       String?      @map("document_hash")
+  rejectionReason    String?      @map("rejection_reason")
+  selfiePath         String?      @map("selfie_path")
+  verifiedAt         DateTime?    @map("verified_at")
+  reviewedBy         String?      @map("reviewed_by") @db.Uuid
+
+  country  Country     @relation(fields: [issuingCountry], references: [isoCode])
+  host     HostProfile @relation(fields: [hostId], references: [userId])
+  reviewed User?       @relation(fields: [reviewedBy], references: [id])
+
+  @@map("host_verifications")
+}
