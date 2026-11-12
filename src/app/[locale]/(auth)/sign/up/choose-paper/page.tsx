@@ -1,0 +1,1 @@
+export default function ChoosePaper () { return <h1>Choose Paper</h1> }

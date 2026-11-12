@@ -2,14 +2,14 @@ import { Geist, Geist_Mono, Figtree } from "next/font/google"
 
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
+import { Toaster } from "@/components/ui/sonner"
 import { cn } from "@/lib/utils"
 
+import { NextIntlClientProvider } from "next-intl"
 import { routing } from "@/i18n/routing"
 
 const geistHeading = Geist({ subsets: ["latin"], variable: "--font-heading" })
-
 const figtree = Figtree({ subsets: ["latin"], variable: "--font-sans" })
-
 const fontMono = Geist_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
@@ -40,8 +40,13 @@ export default async function RootLayout({
         geistHeading.variable
       )}
     >
-      <body>
-        <ThemeProvider>{children}</ThemeProvider>
+      <body className="min-h-svh bg-secondary">
+        <NextIntlClientProvider locale={locale}>
+          <ThemeProvider>
+            {children} 
+            <Toaster position="top-left" />
+          </ThemeProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   )

@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr"
 import { NextResponse, type NextRequest } from "next/server"
 import { routing } from "@/i18n/routing"
 
-const publicPaths = ["/", "/login", "/cadastro", "/auth"]
+const publicPaths = ["/", "/sign/in", "/sign/up"]
 
 function removeLocale(pathname: string) {
   const locale = routing.locales.find(
@@ -52,7 +52,9 @@ export async function updateSession(
 
   if (!user && !isPublic(removeLocale(request.nextUrl.pathname))) {
     const url = request.nextUrl.clone()
-    url.pathname = "/login"
+    const next = removeLocale(request.nextUrl.pathname) + request.nextUrl.search
+    url.pathname = "/sign/in"
+    url.search = `?next=${encodeURIComponent(next)}`
     return NextResponse.redirect(url)
   }
 

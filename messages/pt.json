@@ -2,5 +2,62 @@
   "Page": {
     "title": "Farol",
     "description": "Em desenvolvimento"
+  },
+  "Login": {
+    "title": "Bem-vindo de volta!",
+    "description": "Entra na tua conta e continua a construir o teu caminho com o Farol.",
+    "emailLabel": "Email",
+    "emailPlaceholder": "email@exemplo.com",
+    "passwordLabel": "Palavra-passe",
+    "passwordPlaceholder": "Introduz a tua palavra-passe",
+    "forgotPassword": "Esqueceste-te da palavra-passe?",
+    "submit": "Entrar",
+    "or": "ou",
+    "google": "Entrar com Google",
+    "noAccount": "Ainda não tens uma conta?",
+    "signUp": "Criar conta",
+    "hidePassword": "Esconder palavra-passe",
+    "showPassword": "Mostrar palavra-passe",
+    "error": {
+      "invalidCredentials": "Credenciais inválidas. Verifica o email e a palavra-passe e tente novamente."
+    }
+  },
+  "Register": {
+    "title": "Crie a tua conta!",
+    "description": "Junta-te ao Farol e começa a construir novas ligações para o teu próximo destino.",
+    "firstNameLabel": "Primeiro nome",
+    "firstNamePlaceholder": "André",
+    "lastNameLabel": "Sobrenome",
+    "lastNamePlaceholder": "Matos",
+    "emailLabel": "Email",
+    "emailPlaceholder": "email@exemplo.com",
+    "passwordLabel": "Palavra-passe",
+    "passwordPlaceholder": "Insira pelo menos 8 caractéres",
+    "confirmPasswordLabel": "Confirme a palavra-passe",
+    "confirmPasswordPlaceholder": "Repita a palavra-passe",
+    "submit": "Criar conta",
+    "or": "ou",
+    "google": "Continuar com Google",
+    "hasAccount": "Já tens uma conta?",
+    "signIn": "Entrar",
+    "hidePassword": "Esconder palavra-passe",
+    "showPassword": "Mostrar palavra-passe",
+    "messages": {
+      "INVALID_EMAIL_ADDRESS": "Introduz um endereço de email válido.",
+      "PASSWORD_NO_MATCH": "As palavras-passe não coincidem.",
+      "TOO_SMALL": "A palavra-passe deve ter pelo menos 8 caracteres.",
+      "EMAIL_EXISTS": "Já existe uma conta associada a este email.",
+      "REGISTRATION_FAILED": "Erro ao criar a conta. Tenta novamente mais tarde.",
+      "EMAIL_ALREADY_REGISTERED": "Este email já está registado. Tenta iniciar sessão ou recuperar a palavra-passe.",
+      "SUCCESS": "Conta criada com sucesso!"
+    }
+  },
+  "ForgotPassword": {
+    "title": "Recuperar palavra-passe",
+    "description": "Esqueceste-te da tua palavra-passe? Introduz o teu email e enviaremos as instruções para recuperares o acesso à tua conta.",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Introduz o email associado à tua conta",
+    "submit": "Enviar instruções",
+    "backToLogin": "Voltar ao início de sessão"
   }
 }

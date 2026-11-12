@@ -1,0 +1,24 @@
+{
+  "Login": {
+    "title": "Welcome back!",
+    "description": "Sign in to your account and continue building your path with Farol.",
+    "emailLabel": "Email",
+    "emailPlaceholder": "email@example.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "forgotPassword": "Forgot your password?",
+    "submit": "Sign in",
+    "or": "or",
+    "google": "Continue with Google",
+    "noAccount": "Don't have an account yet?",
+    "signUp": "Create account"
+  },
+  "ForgotPassword": {
+    "title": "Reset your password",
+    "description": "Forgot your password? Enter your email address and we'll send you instructions to regain access to your account.",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Enter the email associated with your account",
+    "submit": "Send instructions",
+    "backToLogin": "Back to sign in"
+  }
+}
