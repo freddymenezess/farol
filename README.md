@@ -27,7 +27,7 @@ Next.js, Tailwind CSS, shadcn/ui, Prisma, PostgreSQL e Supabase (autenticação,
 Precisas de Node.js, Docker Desktop e do Supabase CLI.
 
 ```bash
-git clone <url-do-repositorio>
+git clone https://github.com/freddymenezess/farol
 cd farol
 npm install
 cp .env.example .env
