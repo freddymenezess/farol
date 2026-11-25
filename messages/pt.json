@@ -5,7 +5,7 @@
   },
   "Login": {
     "title": "Bem-vindo de volta!",
-    "description": "Entra na tua conta e continua a construir o teu caminho com o Farol.",
+    "description": "Entra e continua a construir o teu caminho com quem partilha os teus sonhos e objetivos.",
     "emailLabel": "Email",
     "emailPlaceholder": "email@exemplo.com",
     "passwordLabel": "Palavra-passe",
@@ -13,28 +13,63 @@
     "forgotPassword": "Esqueceste-te da palavra-passe?",
     "submit": "Entrar",
     "or": "ou",
-    "google": "Entrar com Google",
+    "google": "Continuar com Google",
     "noAccount": "Ainda não tens uma conta?",
     "signUp": "Criar conta",
     "hidePassword": "Esconder palavra-passe",
     "showPassword": "Mostrar palavra-passe",
-    "error": {
-      "invalidCredentials": "Credenciais inválidas. Verifica o email e a palavra-passe e tente novamente."
+    "messages": {
+      "INVALID_CREDENTIALS": "Email ou palavra-passe incorretos. Verifica os teus dados e tenta novamente.",
+      "ERROR": "Não foi possível iniciar sessão. Tenta novamente mais tarde."
+    }
+  },
+  "Recover": {
+    "title": "Recupera a tua palavra-passe",
+    "description": "Enviaremos um email com as instruções para recuperares o acesso à tua conta.",
+    "emailLabel": "Endereço de email",
+    "emailPlaceholder": "email@exemplo.com",
+    "submit": "Enviar instruções",
+    "backToLogin": "Voltar ao início de sessão",
+    "messages": {
+      "INVALID_EMAIL_ADDRESS": "Introduz um endereço de email válido.",
+      "OVER_EMAIL_SEND_RATE_LIMIT": "Impossível enviar o email. Tenta novamente mais tarde.",
+      "SEND_FAILED": "Falha ao enviar o email. Verifica os dados e tenta novamente.",
+      "ERROR": "Ocorreu um erro. Tenta novamente mais tarde.",
+      "SUCCESS": "As intruções foram enviadas para o teu endereço de email"
+    }
+  },
+  "Reset": {
+    "title": "Cria uma nova palavra-passe",
+    "description": "Irás usar esta palavra-passe para iniciar sessão na tua conta a partir de agora.",
+    "newPasswordLabel": "Nova palavra-passe",
+    "newPasswordPlaceholder": "Cria uma palavra-passe com pelo menos 8 caracteres",
+    "confirmPasswordLabel": "Confirma a palavra-passe",
+    "confirmPasswordPlaceholder": "Introduz novamente a tua palavra-passe",
+    "submit": "Redefinir palavra-passe",
+    "backToLogin": "Voltar ao início de sessão",
+    "hidePassword": "Esconder palavra-passe",
+    "showPassword": "Mostrar palavra-passe",
+    "messages": {
+      "ERROR": "Ocorreu um erro. Tenta novamente mais tarde.",
+      "OVER_EMAIL_SEND_RATE_LIMIT": "",
+      "SUCCESS": "Palavra-passe alterada com sucesso",
+      "SAME_PASSWORD": "A nova palavra-passe não pode ser igual a anterior",
+      "PASSWORD_NO_MATCH": "As palavras-passe não coincidem."
     }
   },
   "Register": {
-    "title": "Crie a tua conta!",
-    "description": "Junta-te ao Farol e começa a construir novas ligações para o teu próximo destino.",
+    "title": "Junta-te ao Farol!",
+    "description": "Cria a tua conta e começa a construir novas ligações para o teu próximo destino.",
     "firstNameLabel": "Primeiro nome",
     "firstNamePlaceholder": "André",
-    "lastNameLabel": "Sobrenome",
+    "lastNameLabel": "Apelido",
     "lastNamePlaceholder": "Matos",
     "emailLabel": "Email",
     "emailPlaceholder": "email@exemplo.com",
     "passwordLabel": "Palavra-passe",
-    "passwordPlaceholder": "Insira pelo menos 8 caractéres",
-    "confirmPasswordLabel": "Confirme a palavra-passe",
-    "confirmPasswordPlaceholder": "Repita a palavra-passe",
+    "passwordPlaceholder": "Cria uma palavra-passe com pelo menos 8 caracteres",
+    "confirmPasswordLabel": "Confirma a palavra-passe",
+    "confirmPasswordPlaceholder": "Introduz novamente a tua palavra-passe",
     "submit": "Criar conta",
     "or": "ou",
     "google": "Continuar com Google",
@@ -46,18 +81,34 @@
       "INVALID_EMAIL_ADDRESS": "Introduz um endereço de email válido.",
       "PASSWORD_NO_MATCH": "As palavras-passe não coincidem.",
       "TOO_SMALL": "A palavra-passe deve ter pelo menos 8 caracteres.",
-      "EMAIL_EXISTS": "Já existe uma conta associada a este email.",
-      "REGISTRATION_FAILED": "Erro ao criar a conta. Tenta novamente mais tarde.",
-      "EMAIL_ALREADY_REGISTERED": "Este email já está registado. Tenta iniciar sessão ou recuperar a palavra-passe.",
-      "SUCCESS": "Conta criada com sucesso!"
+      "PASSWORD_REQUIRED": "A palavra-passe é obrigatória.",
+      "REGISTRATION_FAILED": "Não foi possível criar a tua conta. Tenta novamente mais tarde.",
+      "SUCCESS": "Conta criada com sucesso!",
+      "ERROR": "Ocorreu um erro inesperado. Tenta novamente mais tarde."
     }
   },
-  "ForgotPassword": {
-    "title": "Recuperar palavra-passe",
-    "description": "Esqueceste-te da tua palavra-passe? Introduz o teu email e enviaremos as instruções para recuperares o acesso à tua conta.",
-    "emailLabel": "Email",
-    "emailPlaceholder": "Introduz o email associado à tua conta",
-    "submit": "Enviar instruções",
-    "backToLogin": "Voltar ao início de sessão"
+  "CheckEmail": {
+    "title": "Verifica o teu email",
+    "description": {
+      "first": "Enviámos um código de verificação para ",
+      "second": ". Introduz o código abaixo para confirmares o teu endereço de email."
+    },
+    "codeLabel": "Código de verificação",
+    "codePlaceholder": "Introduz o código de 6 dígitos",
+    "submit": "Verificar email",
+    "resendIn": "Podes pedir um novo código em {seconds}s",
+    "resendCode": "Reenviar código",
+    "backToLogin": "Utilizar outro email",
+    "messages": {
+      "INVALID_CODE": "Código inválido. Verifica os dígitos e tenta novamente.",
+      "CODE_EXPIRED": "Este código expirou. Solicita um novo código.",
+      "VERIFICATION_FAILED": "Não foi possível verificar o teu email. Tenta novamente mais tarde.",
+      "SUCCESS": "Email verificado com sucesso!",
+      "ERROR": "Ocorreu um erro inesperado. Tenta novamente mais tarde.",
+      "SESSION_EXPIRED": "A tua sessão expirou. Inicia sessão novamente.",
+      "WAIT_ASK_EMAIL": "Aguarda um pouco antes de solicitar outro código.",
+      "ERROR_SENDIND_CODE": "Não foi possível reenviar o código. Tenta novamente.",
+      "OVER_EMAIL_SEND_RATE_LIMIT": "Atingiste o limite de envio de emails. Tenta novamente mais tarde."
+    }
   }
 }

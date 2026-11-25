@@ -1,8 +1,9 @@
-import { createServerClient } from "@supabase/ssr"
 import { NextResponse, type NextRequest } from "next/server"
+import { createServerClient } from "@supabase/ssr"
 import { routing } from "@/i18n/routing"
+import { PASSWORD_RECOVERY_COOKIE } from "@/lib/cookies/names"
 
-const publicPaths = ["/", "/sign/in", "/sign/up"]
+const publicPaths = ["/", "/sign", "/password/recover"]
 
 function removeLocale(pathname: string) {
   const locale = routing.locales.find(
@@ -49,10 +50,29 @@ export async function updateSession(
 
   const { data } = await supabase.auth.getClaims()
   const user = data?.claims
+  const path = removeLocale(request.nextUrl.pathname)
+  const next = path + request.nextUrl.search
+
+  if (
+    user &&
+    request.cookies.has(PASSWORD_RECOVERY_COOKIE) &&
+    path !== "/password/reset"
+  ) {
+    const url = request.nextUrl.clone()
+    url.pathname = "/password/reset"
+    url.search = `?next=${encodeURIComponent(next)}`
+
+    const redirect = NextResponse.redirect(url)
+    response.cookies.getAll().forEach((cookie) => redirect.cookies.set(cookie))
+    return redirect
+  }
+
+  if (!user && request.cookies.has(PASSWORD_RECOVERY_COOKIE)) {
+    response.cookies.delete(PASSWORD_RECOVERY_COOKIE)
+  }
 
   if (!user && !isPublic(removeLocale(request.nextUrl.pathname))) {
     const url = request.nextUrl.clone()
-    const next = removeLocale(request.nextUrl.pathname) + request.nextUrl.search
     url.pathname = "/sign/in"
     url.search = `?next=${encodeURIComponent(next)}`
     return NextResponse.redirect(url)

@@ -1,3 +1,4 @@
+import { Spinner } from "@/components/ui/spinner"
 import { Button as ButtonPrimitive } from "@base-ui/react/button"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "cn"
@@ -39,18 +40,32 @@ const buttonVariants = cva(
   }
 )
 
+type ButtonProps = ButtonPrimitive.Props &
+  VariantProps<typeof buttonVariants> & {
+    isPending?: boolean
+    spinner?: boolean
+  }
+
 function Button({
   className,
   variant = "default",
   size = "default",
+  isPending = false,
+  spinner = false,
+  disabled,
+  children,
   ...props
-}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+}: ButtonProps) {
   return (
     <ButtonPrimitive
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
-    />
+      disabled={disabled || isPending}
+      aria-busy={isPending || undefined}
+    >
+      {isPending && spinner ? <Spinner data-icon="inline-start" /> : children}
+    </ButtonPrimitive>
   )
 }
 

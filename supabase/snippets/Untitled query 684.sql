@@ -1,0 +1,1 @@
+select extname from pg_extension where extname = 'pg_cron';

@@ -1,13 +1,10 @@
 "use client"
 
 import { useActionState } from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  AlertCircleIcon,
-  EyeIcon,
-  EyeOffIcon,
-} from "@hugeicons/core-free-icons"
+import { useSearchParams } from "next/navigation"
+import { EyeIcon, EyeOffIcon } from "@hugeicons/core-free-icons"
 import { Button, buttonVariants } from "@/components/ui/button"
 import {
   Card,
@@ -21,30 +18,50 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
+import { toast } from "sonner"
 import { Link } from "@/i18n/navigation"
-import { useTranslations, useLocale } from "next-intl"
-import { GoogleLogo } from "@/components/ui/google-logo"
-import { cn } from "@/lib/utils"
-import { signinAction } from "@/actions/auth/login"
-import type { LoginState } from "@/types/auth"
+import { useTranslations } from "next-intl"
+import { GoogleButton } from "@/components/auth/google-button"
+import { cn, safeNext } from "@/lib/utils"
+import { signInAction } from "@/actions/auth/login-action"
 
-export function LoginForm({ className }: { className?: string }) {
+import type { Locale } from "@/types/next-intl-type"
+import type { LoginState } from "@/types/auth-type"
+
+export function LoginForm({
+  className,
+  locale,
+}: {
+  className?: string
+  locale: Locale
+}) {
   const initialState: LoginState = {
-    email: "",
-    error: undefined,
     success: false,
+    error: undefined,
+    values: {
+      email: "",
+    },
   }
   const [state, formAction, isPending] = useActionState<LoginState, FormData>(
-    signinAction,
+    signInAction.bind(null, locale),
     initialState
   )
   const [showPassword, setShowPassword] = useState(false)
-  const next = new URLSearchParams(location.search).get("next") || "/dashboard"
-  const locale = useLocale()
+  const searchParams = useSearchParams()
+  const next = safeNext(searchParams.get("next")) || "/emigrant"
+  const error = searchParams.get("error") || undefined
   const t = useTranslations("Login")
 
+  useEffect(() => {
+    if (error) {
+      toast.error(t("messages.ERROR"))
+    } else if (!state.success && state.error) {
+      toast.error(t(`messages.${state.error}`))
+    }
+  }, [state, t, error])
+
   return (
-    <Card className={cn("w-full max-w-sm shadow-none ring-0", className)}>
+    <Card className={cn("w-full max-w-md shadow-none ring-0", className)}>
       <form
         className="group flex flex-col gap-(--card-spacing)"
         action={formAction}
@@ -72,7 +89,7 @@ export function LoginForm({ className }: { className?: string }) {
                 name="email"
                 type="email"
                 placeholder={t("emailPlaceholder")}
-                defaultValue={state.email}
+                defaultValue={!state.success ? (state.values?.email ?? "") : ""}
                 required
               />
             </div>
@@ -80,7 +97,7 @@ export function LoginForm({ className }: { className?: string }) {
               <div className="flex items-center">
                 <Label htmlFor="password">{t("passwordLabel")}</Label>
                 <Link
-                  href="#"
+                  href="/password/recover"
                   className="ml-auto inline-block text-sm text-muted-foreground underline-offset-4 hover:underline"
                 >
                   {t("forgotPassword")}
@@ -111,27 +128,16 @@ export function LoginForm({ className }: { className?: string }) {
                 </button>
               </div>
             </div>
-            {state.error && (
-              <p className="flex items-start gap-1 text-sm text-destructive">
-                <HugeiconsIcon
-                  icon={AlertCircleIcon}
-                  size={14}
-                  color="currentColor"
-                  strokeWidth={2}
-                  className="mt-0.5 shrink-0"
-                />
-                <span>{t(`error.${state.error}`)}</span>
-              </p>
-            )}
           </div>
-          <input type="hidden" name="locale" value={locale} />
           <input type="hidden" name="next" value={next} />
         </CardContent>
         <CardFooter className="flex-col items-stretch gap-4">
           <Button
             type="submit"
             className="w-full group-invalid:pointer-events-none group-invalid:opacity-50"
+            isPending={isPending}
             disabled={isPending}
+            spinner
           >
             {t("submit")}
           </Button>
@@ -142,10 +148,7 @@ export function LoginForm({ className }: { className?: string }) {
             </p>
             <Separator className="flex-1" />
           </div>
-          <Button variant="outline" className="w-full" disabled={isPending}>
-            <GoogleLogo />
-            {t("google")}
-          </Button>
+          <GoogleButton next={next} />
         </CardFooter>
       </form>
     </Card>
