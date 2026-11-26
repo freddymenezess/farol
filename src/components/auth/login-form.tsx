@@ -1,10 +1,13 @@
 "use client"
 
-import { useActionState } from "react"
-import { useState, useEffect } from "react"
-import { HugeiconsIcon } from "@hugeicons/react"
+import { useActionState, useEffect, useState } from "react"
 import { useSearchParams } from "next/navigation"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { EyeIcon, EyeOffIcon } from "@hugeicons/core-free-icons"
+import { useTranslations } from "next-intl"
+import { toast } from "sonner"
+
+import { GoogleButton } from "@/components/auth/google-button"
 import { Button, buttonVariants } from "@/components/ui/button"
 import {
   Card,
@@ -15,18 +18,27 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@/components/ui/input-group"
 import { Separator } from "@/components/ui/separator"
-import { toast } from "sonner"
-import { Link } from "@/i18n/navigation"
-import { useTranslations } from "next-intl"
-import { GoogleButton } from "@/components/auth/google-button"
-import { cn, safeNext } from "@/lib/utils"
 import { signInAction } from "@/actions/auth/login-action"
+import { Link } from "@/i18n/navigation"
+import { cn, safeNext } from "@/lib/utils"
 
 import type { Locale } from "@/types/next-intl-type"
 import type { LoginState } from "@/types/auth-type"
+
+const initialState: LoginState = {
+  success: false,
+  error: undefined,
+  values: { email: "" },
+}
 
 export function LoginForm({
   className,
@@ -35,30 +47,24 @@ export function LoginForm({
   className?: string
   locale: Locale
 }) {
-  const initialState: LoginState = {
-    success: false,
-    error: undefined,
-    values: {
-      email: "",
-    },
-  }
+  const t = useTranslations("Login")
+  const [showPassword, setShowPassword] = useState(false)
   const [state, formAction, isPending] = useActionState<LoginState, FormData>(
     signInAction.bind(null, locale),
     initialState
   )
-  const [showPassword, setShowPassword] = useState(false)
+
   const searchParams = useSearchParams()
   const next = safeNext(searchParams.get("next")) || "/emigrant"
-  const error = searchParams.get("error") || undefined
-  const t = useTranslations("Login")
+  const urlError = searchParams.get("error") || undefined
 
   useEffect(() => {
-    if (error) {
+    if (urlError) {
       toast.error(t("messages.ERROR"))
     } else if (!state.success && state.error) {
       toast.error(t(`messages.${state.error}`))
     }
-  }, [state, t, error])
+  }, [state, t, urlError])
 
   return (
     <Card className={cn("w-full max-w-md shadow-none ring-0", className)}>
@@ -80,57 +86,61 @@ export function LoginForm({
             </Link>
           </CardAction>
         </CardHeader>
+
         <CardContent>
-          <div className="flex flex-col gap-6">
-            <div className="grid gap-2">
-              <Label htmlFor="email">{t("emailLabel")}</Label>
+          <FieldGroup>
+            <Field>
+              <FieldLabel htmlFor="email">{t("emailLabel")}</FieldLabel>
               <Input
                 id="email"
                 name="email"
                 type="email"
+                required
                 placeholder={t("emailPlaceholder")}
                 defaultValue={!state.success ? (state.values?.email ?? "") : ""}
-                required
               />
-            </div>
-            <div className="grid gap-2">
+            </Field>
+
+            <Field>
               <div className="flex items-center">
-                <Label htmlFor="password">{t("passwordLabel")}</Label>
+                <FieldLabel htmlFor="password">{t("passwordLabel")}</FieldLabel>
                 <Link
                   href="/password/recover"
-                  className="ml-auto inline-block text-sm text-muted-foreground underline-offset-4 hover:underline"
+                  className="ml-auto text-sm text-muted-foreground underline-offset-4 hover:underline"
                 >
                   {t("forgotPassword")}
                 </Link>
               </div>
-              <div className="relative">
-                <Input
+              <InputGroup>
+                <InputGroupInput
                   id="password"
                   name="password"
                   type={showPassword ? "text" : "password"}
-                  placeholder={t("passwordPlaceholder")}
-                  className="pr-10"
                   required
+                  placeholder={t("passwordPlaceholder")}
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  aria-label={
-                    showPassword ? t("hidePassword") : t("showPassword")
-                  }
-                  className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                >
-                  <HugeiconsIcon
-                    icon={showPassword ? EyeOffIcon : EyeIcon}
-                    size={20}
-                    color="currentColor"
-                  />
-                </button>
-              </div>
-            </div>
-          </div>
+                <InputGroupAddon align="inline-end">
+                  <InputGroupButton
+                    type="button"
+                    size="icon-xs"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    aria-label={
+                      showPassword ? t("hidePassword") : t("showPassword")
+                    }
+                  >
+                    <HugeiconsIcon
+                      icon={showPassword ? EyeOffIcon : EyeIcon}
+                      size={20}
+                      color="currentColor"
+                    />
+                  </InputGroupButton>
+                </InputGroupAddon>
+              </InputGroup>
+            </Field>
+          </FieldGroup>
           <input type="hidden" name="next" value={next} />
         </CardContent>
+
         <CardFooter className="flex-col items-stretch gap-4">
           <Button
             type="submit"

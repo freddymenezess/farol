@@ -1,8 +1,10 @@
 "use client"
 
-import { useActionState } from "react"
-import { useEffect } from "react"
+import { useActionState, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
+import { useTranslations } from "next-intl"
+import { toast } from "sonner"
+
 import { Button, buttonVariants } from "@/components/ui/button"
 import {
   Card,
@@ -12,37 +14,38 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { toast } from "sonner"
-import { Link } from "@/i18n/navigation"
-import { useTranslations } from "next-intl"
-import { cn } from "@/lib/utils"
 import { requestPasswordRecoveryAction } from "@/actions/auth/recover-action"
+import { Link } from "@/i18n/navigation"
+import { cn } from "@/lib/utils"
+
 import type { RequestPasswordRecoveryState } from "@/types/auth-type"
 
+const initialState: RequestPasswordRecoveryState = {
+  success: false,
+  error: "",
+}
+
 export function RecoverForm({ className }: { className?: string }) {
-  const initialState: RequestPasswordRecoveryState = {
-    success: false,
-    error: "",
-  }
+  const t = useTranslations("Recover")
   const [state, formAction, isPending] = useActionState<
     RequestPasswordRecoveryState,
     FormData
   >(requestPasswordRecoveryAction, initialState)
+
   const searchParams = useSearchParams()
-  const error = searchParams.get("error") || undefined
-  const t = useTranslations("Recover")
+  const urlError = searchParams.get("error") || undefined
 
   useEffect(() => {
-    if (error) {
+    if (urlError) {
       toast.error(t("messages.ERROR"))
     } else if (!state.success && state.error) {
       toast.error(t(`messages.${state.error}`))
     } else if (state.success) {
-      toast.success(t(`messages.SUCCESS`))
+      toast.success(t("messages.SUCCESS"))
     }
-  }, [state, t, error])
+  }, [state, t, urlError])
 
   return (
     <Card className={cn("w-full max-w-md shadow-none ring-0", className)}>
@@ -51,28 +54,28 @@ export function RecoverForm({ className }: { className?: string }) {
         action={formAction}
       >
         <CardHeader>
-          <CardTitle className="col-span-2 text-xl font-semibold">
-            {t("title")}
-          </CardTitle>
+          <CardTitle className="text-xl font-semibold col-span-2">{t("title")}</CardTitle>
+          <CardDescription className="col-span-2">
+            {t("description")}
+          </CardDescription>
         </CardHeader>
+
         <CardContent>
-          <div className="flex flex-col gap-6">
-            <div className="grid gap-2">
-              <Label htmlFor="email">{t("emailLabel")}</Label>
+          <FieldGroup>
+            <Field>
+              <FieldLabel htmlFor="email">{t("emailLabel")}</FieldLabel>
               <Input
                 id="email"
                 name="email"
                 type="email"
-                placeholder={t("emailPlaceholder")}
                 required
+                placeholder={t("emailPlaceholder")}
               />
-            </div>
-          </div>
-          <CardDescription className="col-span-2">
-            {t("description")}
-          </CardDescription>
+            </Field>
+          </FieldGroup>
         </CardContent>
-        <CardFooter className="flex-col items-stretch gap-2">
+
+        <CardFooter className="flex-col items-stretch gap-4">
           <Button
             type="submit"
             className="w-full group-invalid:pointer-events-none group-invalid:opacity-50"

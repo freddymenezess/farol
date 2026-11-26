@@ -1,9 +1,11 @@
 "use client"
 
-import { useActionState } from "react"
-import { useState, useEffect } from "react"
+import { useActionState, useEffect, useState } from "react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { EyeIcon, EyeOffIcon } from "@hugeicons/core-free-icons"
+import { toast } from "sonner"
+import { useTranslations } from "next-intl"
+
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -13,43 +15,75 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@/components/ui/input-group"
 import { Separator } from "@/components/ui/separator"
-import { toast } from "sonner"
-import { Link } from "@/i18n/navigation"
-import { useTranslations } from "next-intl"
 import { GoogleButton } from "@/components/auth/google-button"
+import { Link } from "@/i18n/navigation"
 import { cn } from "@/lib/utils"
 import { signUpAction } from "@/actions/auth/register-action"
 
 import type { Locale } from "@/types/next-intl-type"
 import type { RegisterState } from "@/types/auth-type"
 
-export function ResetForm({
+const initialState: RegisterState = {
+  values: undefined,
+  error: {},
+  success: false,
+}
+
+export function RegisterForm({
   className,
   locale,
 }: {
   className?: string
   locale: Locale
 }) {
-  const initialState: RegisterState = {
-    values: undefined,
-    error: {},
-    success: false,
-  }
-  const [state, formAction, isPending] = useActionState<
-    RegisterState,
-    FormData
-  >(signUpAction.bind(null, locale), initialState)
-  const [showPassword, setShowPassword] = useState(false)
   const t = useTranslations("Register")
+  const [showPassword, setShowPassword] = useState(false)
+  const [state, formAction, isPending] = useActionState<RegisterState, FormData>(
+    signUpAction.bind(null, locale),
+    initialState
+  )
+
+  const errors = state.success ? {} : state.error
 
   useEffect(() => {
-    if (!state.success && state.error?.signup) {
-      toast.error(t(`messages.${state.error.signup[0]}`))
+    if (errors.signup?.[0]) {
+      toast.error(t(`messages.${errors.signup[0]}`))
     }
-  }, [state, t])
+  }, [errors.signup, t])
+
+  const messages = (codes?: string[]) =>
+    codes?.map((code) => ({ message: t(`messages.${code}`) }))
+
+  const passwordToggle = (
+    <InputGroupAddon align="inline-end">
+      <InputGroupButton
+        type="button"
+        size="icon-xs"
+        onClick={() => setShowPassword((prev) => !prev)}
+        aria-label={showPassword ? t("hidePassword") : t("showPassword")}
+      >
+        <HugeiconsIcon
+          icon={showPassword ? EyeOffIcon : EyeIcon}
+          size={20}
+          color="currentColor"
+        />
+      </InputGroupButton>
+    </InputGroupAddon>
+  )
 
   return (
     <Card className={cn("w-full max-w-md shadow-none ring-0", className)}>
@@ -63,105 +97,59 @@ export function ResetForm({
             {t("description")}
           </CardDescription>
         </CardHeader>
+
         <CardContent>
-          <div className="flex flex-col gap-6">
-            <div className="grid gap-2">
-              <Label htmlFor="email">{t("emailLabel")}</Label>
+          <FieldGroup>
+            <Field data-invalid={!!errors.email}>
+              <FieldLabel htmlFor="email">{t("emailLabel")}</FieldLabel>
               <Input
                 id="email"
                 name="email"
                 type="email"
                 required
+                aria-invalid={!!errors.email}
                 placeholder={t("emailPlaceholder")}
                 defaultValue={!state.success ? (state.values?.email ?? "") : ""}
               />
-              <div>
-                {!state.success &&
-                  state.values?.email &&
-                  state.error.email.map((error, index) => (
-                    <p key={index} className="text-sm text-destructive">
-                      {t(`messages.${error}`)}
-                    </p>
-                  ))}
-              </div>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="password">{t("passwordLabel")}</Label>
-              <div className="relative">
-                <Input
+              <FieldError errors={messages(errors.email)} />
+            </Field>
+
+            <Field data-invalid={!!errors.password}>
+              <FieldLabel htmlFor="password">{t("passwordLabel")}</FieldLabel>
+              <InputGroup>
+                <InputGroupInput
                   id="password"
                   name="password"
                   type={showPassword ? "text" : "password"}
                   required
+                  aria-invalid={!!errors.password}
                   placeholder={t("passwordPlaceholder")}
-                  className="pr-10"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  aria-label={
-                    showPassword ? t("hidePassword") : t("showPassword")
-                  }
-                  className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                >
-                  <HugeiconsIcon
-                    icon={showPassword ? EyeOffIcon : EyeIcon}
-                    size={20}
-                    color="currentColor"
-                  />
-                </button>
-              </div>
-              <div>
-                {!state.success &&
-                  state.error?.password &&
-                  state.error.password.map((error, index) => (
-                    <p key={index} className="text-sm text-destructive">
-                      {t(`messages.${error}`)}
-                    </p>
-                  ))}
-              </div>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="confirmPassword">
+                {passwordToggle}
+              </InputGroup>
+              <FieldError errors={messages(errors.password)} />
+            </Field>
+
+            <Field data-invalid={!!errors.confirmPassword}>
+              <FieldLabel htmlFor="confirmPassword">
                 {t("confirmPasswordLabel")}
-              </Label>
-              <div className="relative">
-                <Input
+              </FieldLabel>
+              <InputGroup>
+                <InputGroupInput
                   id="confirmPassword"
                   name="confirmPassword"
                   type={showPassword ? "text" : "password"}
                   required
+                  aria-invalid={!!errors.confirmPassword}
                   placeholder={t("confirmPasswordPlaceholder")}
-                  className="pr-10"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  aria-label={
-                    showPassword ? t("hidePassword") : t("showPassword")
-                  }
-                  className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                >
-                  <HugeiconsIcon
-                    icon={showPassword ? EyeOffIcon : EyeIcon}
-                    size={20}
-                    color="currentColor"
-                  />
-                </button>
-              </div>
-              <div>
-                {!state.success &&
-                  state.error?.confirmPassword &&
-                  state.error.confirmPassword.map((error, index) => (
-                    <p key={index} className="text-sm text-destructive">
-                      {t(`messages.${error}`)}
-                    </p>
-                  ))}
-              </div>
-              <div></div>
-            </div>
-          </div>
+                {passwordToggle}
+              </InputGroup>
+              <FieldError errors={messages(errors.confirmPassword)} />
+            </Field>
+          </FieldGroup>
         </CardContent>
+
         <CardFooter className="flex-col items-stretch gap-4">
           <Button
             type="submit"

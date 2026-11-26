@@ -1,10 +1,12 @@
 "use client"
 
-import { useActionState } from "react"
-import { useState, useEffect } from "react"
-import { HugeiconsIcon } from "@hugeicons/react"
+import { useActionState, useEffect, useState } from "react"
 import { useSearchParams } from "next/navigation"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { EyeIcon, EyeOffIcon } from "@hugeicons/core-free-icons"
+import { useTranslations } from "next-intl"
+import { toast } from "sonner"
+
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -14,15 +16,23 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { toast } from "sonner"
-import { useTranslations } from "next-intl"
-import { cn } from "@/lib/utils"
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@/components/ui/input-group"
 import { resetPasswordAction } from "@/actions/auth/reset-action"
+import { cn } from "@/lib/utils"
 
 import type { Locale } from "@/types/next-intl-type"
 import type { ResetPasswordState } from "@/types/auth-type"
+
+const initialState: ResetPasswordState = {
+  error: "",
+  success: false,
+}
 
 export function ResetForm({
   className,
@@ -31,26 +41,40 @@ export function ResetForm({
   className?: string
   locale: Locale
 }) {
-  const initialState: ResetPasswordState = {
-    error: "",
-    success: false,
-  }
+  const t = useTranslations("Reset")
+  const [showPassword, setShowPassword] = useState(false)
   const [state, formAction, isPending] = useActionState<
     ResetPasswordState,
     FormData
   >(resetPasswordAction.bind(null, locale), initialState)
-  const [showPassword, setShowPassword] = useState(false)
+
   const searchParams = useSearchParams()
-  const error = searchParams.get("error") || undefined
-  const t = useTranslations("Reset")
+  const urlError = searchParams.get("error") || undefined
 
   useEffect(() => {
-    if (error) {
+    if (urlError) {
       toast.error(t("messages.ERROR"))
     } else if (!state.success && state.error) {
       toast.error(t(`messages.${state.error}`))
     }
-  }, [state, t, error])
+  }, [state, t, urlError])
+
+  const passwordToggle = (
+    <InputGroupAddon align="inline-end">
+      <InputGroupButton
+        type="button"
+        size="icon-xs"
+        onClick={() => setShowPassword((prev) => !prev)}
+        aria-label={showPassword ? t("hidePassword") : t("showPassword")}
+      >
+        <HugeiconsIcon
+          icon={showPassword ? EyeOffIcon : EyeIcon}
+          size={20}
+          color="currentColor"
+        />
+      </InputGroupButton>
+    </InputGroupAddon>
+  )
 
   return (
     <Card className={cn("w-full max-w-md shadow-none ring-0", className)}>
@@ -59,73 +83,48 @@ export function ResetForm({
         action={formAction}
       >
         <CardHeader>
-          <CardTitle className="col-span-2 text-xl font-semibold">
-            {t("title")}
-          </CardTitle>
+          <CardTitle className="text-xl font-semibold col-span-2">{t("title")}</CardTitle>
           <CardDescription className="col-span-2">
             {t("description")}
           </CardDescription>
         </CardHeader>
+
         <CardContent>
-          <div className="flex flex-col gap-6">
-            <div className="grid gap-2">
-              <Label htmlFor="password">{t("newPasswordLabel")}</Label>
-              <div className="relative">
-                <Input
+          <FieldGroup>
+            <Field>
+              <FieldLabel htmlFor="password">
+                {t("newPasswordLabel")}
+              </FieldLabel>
+              <InputGroup>
+                <InputGroupInput
                   id="password"
                   name="password"
                   type={showPassword ? "text" : "password"}
                   required
                   placeholder={t("newPasswordPlaceholder")}
-                  className="pr-10"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  aria-label={
-                    showPassword ? t("hidePassword") : t("showPassword")
-                  }
-                  className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                >
-                  <HugeiconsIcon
-                    icon={showPassword ? EyeOffIcon : EyeIcon}
-                    size={20}
-                    color="currentColor"
-                  />
-                </button>
-              </div>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="confirmPassword">
+                {passwordToggle}
+              </InputGroup>
+            </Field>
+
+            <Field>
+              <FieldLabel htmlFor="confirmPassword">
                 {t("confirmPasswordLabel")}
-              </Label>
-              <div className="relative">
-                <Input
+              </FieldLabel>
+              <InputGroup>
+                <InputGroupInput
                   id="confirmPassword"
                   name="confirmPassword"
                   type={showPassword ? "text" : "password"}
                   required
                   placeholder={t("confirmPasswordPlaceholder")}
-                  className="pr-10"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  aria-label={
-                    showPassword ? t("hidePassword") : t("showPassword")
-                  }
-                  className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                >
-                  <HugeiconsIcon
-                    icon={showPassword ? EyeOffIcon : EyeIcon}
-                    size={20}
-                    color="currentColor"
-                  />
-                </button>
-              </div>
-            </div>
-          </div>
+                {passwordToggle}
+              </InputGroup>
+            </Field>
+          </FieldGroup>
         </CardContent>
+
         <CardFooter className="flex-col items-stretch gap-4">
           <Button
             type="submit"

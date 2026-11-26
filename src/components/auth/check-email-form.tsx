@@ -30,10 +30,12 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp"
 
+import { Locale } from "@/types/next-intl-type"
+
 type CheckEmailFormProps = {
   email: string
   initialSecondsLeft: number
-  locale: string
+  locale: Locale
 }
 
 const slotClassName =

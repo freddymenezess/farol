@@ -1,5 +1,5 @@
 import { redirectIfAuthenticated } from "@/helpers/auth-helper"
-import { ResetForm } from "@/components/auth/register-form"
+import { RegisterForm } from "@/components/auth/register-form"
 
 import type { Locale } from "@/types/next-intl-type"
 
@@ -12,5 +12,5 @@ export default async function Page({
 
   await redirectIfAuthenticated(locale)
 
-  return <ResetForm locale={locale} />
+  return <RegisterForm locale={locale} />
 }
