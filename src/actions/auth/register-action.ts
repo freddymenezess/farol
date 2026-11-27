@@ -1,11 +1,12 @@
 "use server"
 
 import { z } from "zod"
+
 import { createClient } from "@/lib/supabase/server"
 import { setPendingVerification } from "@/lib/cookies/pending-verification"
 import { registerSchema } from "@/lib/schemas/auth-schema"
 import { redirect } from "@/i18n/navigation"
-import { ROUTES } from "@/lib/onboarding-draft-steps"
+import { resolveDestination } from "@/services/auth/resolve-destination-service"
 
 import type { RegisterState } from "@/types/auth-type"
 import type { Locale } from "@/types/next-intl-type"
@@ -23,7 +24,7 @@ export async function signUpAction(
 
   if (!parsed.success) {
     return {
-      success: false,
+      success: false as const,
       error: z.flattenError(parsed.error).fieldErrors,
       values: {
         email: String(formData.get("email") ?? ""),
@@ -34,20 +35,27 @@ export async function signUpAction(
   const { email, password } = parsed.data
 
   const supabase = await createClient()
-  const { error } = await supabase.auth.signUp({
+  const {
+    error,
+    data: { user },
+  } = await supabase.auth.signUp({
     email: email,
     password: password,
   })
+
   await setPendingVerification(email)
 
-  if (error) {
-    console.error("REGISTRATION_FAILED:", error.message)
+  if (error || !user) {
+    console.error("Falha ao se cadastrar:", error?.message)
+
     return {
-      success: false,
+      success: false as const,
       error: { signup: ["REGISTRATION_FAILED"] },
       values: { email },
     }
   }
 
-  redirect({ href: ROUTES.paper, locale })
+  const href = await resolveDestination(user.id)
+
+  redirect({ href, locale })
 }

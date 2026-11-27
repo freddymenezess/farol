@@ -11,9 +11,9 @@ import { routing } from "@/i18n/routing"
 import type { Locale } from "@/types/next-intl-type"
 import type { Metadata } from "next"
 
-const geistHeading = Geist({ subsets: ["latin"], variable: "--font-heading" })
+const geist = Geist({ subsets: ["latin"], variable: "--font-heading" })
 const figtree = Figtree({ subsets: ["latin"], variable: "--font-sans" })
-const fontMono = Geist_Mono({
+const geistMono = Geist_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
 })
@@ -43,10 +43,10 @@ export default async function RootLayout({
       suppressHydrationWarning
       className={cn(
         "antialiased",
-        fontMono.variable,
+        geistMono.variable,
         "font-sans",
         figtree.variable,
-        geistHeading.variable
+        geist.variable
       )}
     >
       <body className="min-h-svh bg-secondary">

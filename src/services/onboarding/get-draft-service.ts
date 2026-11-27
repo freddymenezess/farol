@@ -1,46 +1,10 @@
 import { redirect } from "@/i18n/navigation"
 
 import { prisma } from "@/lib/prisma"
-import { ROUTES, pathToStep, stepToPath } from "@/lib/onboarding-draft-steps"
+import { ROUTES, pathToStep, stepToPath } from "@/lib/onboarding-steps"
 
 import { Role } from "@/generated/prisma/enums"
-import type { OnboardingDraftModel } from "@/generated/prisma/models"
-import type { OnboardingPath } from "@/lib/onboarding-draft-steps"
-
-const DRAFT_TTL_DAYS = 7 // TODO: alinhar com o prazo de limpeza do trigger
-
-export function newDraftExpiry() {
-  return new Date(Date.now() + DRAFT_TTL_DAYS * 24 * 60 * 60 * 1000)
-}
-
-function asObject(value: unknown): Record<string, unknown> {
-  return value && typeof value === "object" && !Array.isArray(value)
-    ? (value as Record<string, unknown>)
-    : {}
-}
-
-export async function saveNextInDraft({
-  userId,
-  draft,
-  next,
-}: {
-  userId: string
-  draft: OnboardingDraftModel | null
-  next: string
-}) {
-  const fresh = {
-    role: null,
-    step: 1,
-    data: { next },
-    expiresAt: newDraftExpiry(),
-  }
-
-  await prisma.onboardingDraft.upsert({
-    where: { userId },
-    update: draft ? { data: { ...asObject(draft.data), next } } : fresh,
-    create: { userId, ...fresh },
-  })
-}
+import type { OnboardingPath } from "@/lib/onboarding-steps"
 
 export async function getOnboardingState(userId: string) {
   const user = await prisma.user.findUnique({
@@ -75,8 +39,8 @@ export async function guardOnboardingDraft({
 
   const draft = state.draft
   if (!draft) {
-    if (pathname === ROUTES.paper) return null
-    redirect({ href: ROUTES.paper, locale })
+    if (pathname === ROUTES.role) return null
+    redirect({ href: ROUTES.role, locale })
   }
 
   const requested = pathToStep(draft.role, pathname)

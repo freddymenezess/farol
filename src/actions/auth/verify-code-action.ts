@@ -7,7 +7,7 @@ import {
   getPendingVerification,
 } from "@/lib/cookies/pending-verification"
 import { createClient } from "@/lib/supabase/server"
-import { ROUTES } from "@/lib/onboarding-draft-steps"
+import { ROUTES } from "@/lib/onboarding-steps"
 
 import type { ActionResult } from "@/types/action-result-type"
 import type { Locale } from "@/types/next-intl-type"
@@ -19,11 +19,11 @@ export async function verifyCodeAction(
   code: string
 ): Promise<ActionResult> {
   const parsed = schema.safeParse(code)
-  if (!parsed.success) return { success: false, error: "INVALID_CODE" }
+  if (!parsed.success) return { success: false as const, error: "INVALID_CODE" }
 
   const pending = await getPendingVerification()
   if (!pending) {
-    return { success: false, error: "SESSION_EXPIRED" }
+    return { success: false as const, error: "SESSION_EXPIRED" }
   }
 
   const supabase = await createClient()
@@ -33,8 +33,8 @@ export async function verifyCodeAction(
     type: "email",
   })
 
-  if (error) return { success: false, error: "INVALID_CODE" }
+  if (error) return { success: false as const, error: "INVALID_CODE" }
 
   await clearPendingVerification()
-  redirect({ href: ROUTES.paper, locale })
+  redirect({ href: ROUTES.role, locale })
 }

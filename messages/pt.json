@@ -110,5 +110,23 @@
       "ERROR_SENDIND_CODE": "Não foi possível reenviar o código. Tenta novamente.",
       "OVER_EMAIL_SEND_RATE_LIMIT": "Atingiste o limite de envio de emails. Tenta novamente mais tarde."
     }
+  },
+  "Paper": {
+    "title": "Como queres fazer parte do Farol?",
+    "description": "Escolhe o papel que melhor representa a forma como queres fazer parte desta comunidade.",
+    "emigrant": {
+      "title": "Emigrante",
+      "description": "Estás a preparar-te para uma nova etapa? Encontra pessoas que partilham o teu destino, troca experiências e constrói ligações que te ajudarão pelo caminho."
+    },
+    "host": {
+      "title": "Anfitrião",
+      "description": "Vives noutro país e queres ajudar quem está a começar? Partilha a tua experiência, oferece acolhimento e ajuda outras pessoas a sentirem-se em casa."
+    },
+    "continue": "Continuar",
+    "messages": {
+      "NO_ROLE_SELECTED": "Escolhe um papel para continuar.",
+      "DRAFT_EXPIRED": "O tempo para concluir este processo expirou. Começa novamente.",
+      "FAILED_SAVE_ROLE": "Não foi possível guardar a tua escolha. Tenta novamente."
+    }
   }
 }

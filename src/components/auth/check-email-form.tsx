@@ -121,7 +121,7 @@ export function CheckEmailForm({
             onChange={setCode}
             onComplete={handleVerify}
             disabled={isVerifying}
-            containerClassName="justify-between"
+            containerClassName="justify-center"
             pattern={REGEXP_ONLY_DIGITS}
             required
           >
@@ -152,7 +152,7 @@ export function CheckEmailForm({
           </Button>
           <Button
             type="button"
-            variant="secondary"
+            variant="ghost"
             className="w-full"
             onClick={() => startLeave(() => changeEmailAction(locale))}
             disabled={isVerifying || isLeaving}

@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server"
 import { loginSchema } from "@/lib/schemas/auth-schema"
-import { resolveDestination } from "@/services/auth-service"
+import { resolveDestination } from "@/services/auth/resolve-destination-service"
 import { redirect } from "@/i18n/navigation"
 
 import type { LoginState } from "@/types/auth-type"
@@ -22,24 +22,25 @@ export async function signInAction(
   })
 
   if (!parsed.success) {
-    return { success: false, error: "INVALID_CREDENTIALS", values: { email } }
+    return {
+      success: false as const,
+      error: "INVALID_CREDENTIALS",
+      values: { email },
+    }
   }
 
   const supabase = await createClient()
-  const { error } = await supabase.auth.signInWithPassword(parsed.data)
+  const {
+    error,
+    data: { user },
+  } = await supabase.auth.signInWithPassword(parsed.data)
 
-  if (error) {
-    console.error("LOGIN_FAILED:", error.message)
+  if (error || !user) {
+    console.error("LOGIN_FAILED:", error?.message)
     return { success: false, error: "INVALID_CREDENTIALS", values: { email } }
   }
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const href = await resolveDestination(user.id, next)
 
-  if (user) {
-    const pathname = await resolveDestination(user.id, next)
-
-    redirect({ href: pathname, locale })
-  }
+  redirect({ href, locale })
 }

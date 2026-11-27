@@ -5,7 +5,7 @@ import { redirect } from "@/i18n/navigation"
 import { createClient } from "@/lib/supabase/server"
 import { resetSchema } from "@/lib/schemas/auth-schema"
 import { requireUser } from "@/lib/supabase/user"
-import { resolveDestination } from "@/services/auth-service"
+import { resolveDestination } from "@/services/auth/resolve-destination-service"
 import { clearPasswordRecovery } from "@/lib/cookies/password-recovery"
 
 import type { ResetPasswordState } from "@/types/auth-type"
@@ -27,7 +27,7 @@ export async function resetPasswordAction(
     const errors = z.flattenError(parsed.error).fieldErrors
 
     return {
-      success: false,
+      success: false as const,
       error: errors.password ? errors.password[0] : "",
     }
   }
@@ -40,10 +40,10 @@ export async function resetPasswordAction(
 
   if (error) {
     if (error.code === "same_password")
-      return { success: false, error: "SAME_PASSWORD" }
+      return { success: false as const, error: "SAME_PASSWORD" }
 
     console.error("Falha ao definir nova palavra-passe:", error.message)
-    return { success: false, error: "ERROR" }
+    return { success: false as const, error: "ERROR" }
   }
 
   await clearPasswordRecovery()

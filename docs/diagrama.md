@@ -41,7 +41,7 @@ erDiagram
   String user_id PK,FK
   OnboardingRole role "nullable"
   Int step
-  Json data
+  Json answers
   DateTime expires_at
 }
 "emigrant_profiles" {
@@ -131,7 +131,7 @@ Properties as follows:
 - `user_id`:
 - `role`:
 - `step`:
-- `data`:
+- `answers`:
 - `expires_at`:
 
 ### `emigrant_profiles`

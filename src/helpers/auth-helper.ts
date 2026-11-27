@@ -1,4 +1,4 @@
-import { resolveDestination } from "@/services/auth-service"
+import { resolveDestination } from "@/services/auth/resolve-destination-service"
 import { getCurrentUser } from "@/lib/supabase/user"
 import { redirect } from "@/i18n/navigation"
 

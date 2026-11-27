@@ -1,5 +1,5 @@
-import { requireOnboardingStep } from "@/helpers/onboarding-draft-helper"
-import { ROUTES } from "@/lib/onboarding-draft-steps"
+import { requireOnboardingStep } from "@/helpers/onboarding-helper"
+import { ROUTES } from "@/lib/onboarding-steps"
 
 export default async function Page() {
   await requireOnboardingStep(ROUTES.emigrantEmigration)

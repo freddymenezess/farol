@@ -1,7 +1,7 @@
 import type { OnboardingRole } from "@/generated/prisma/enums"
 
 export const ROUTES = {
-  paper: "/onboarding/paper",
+  role: "/onboarding/role",
   emigrantPersonal: "/onboarding/emigrant/data/personal",
   emigrantEmigration: "/onboarding/emigrant/data/emigration",
   hostPersonal: "/onboarding/host/data/personal",
@@ -12,7 +12,7 @@ export const ROUTES = {
 
 export type OnboardingPath = (typeof ROUTES)[keyof typeof ROUTES]
 
-const COMMON_STEPS = [ROUTES.paper] as const
+const COMMON_STEPS = [ROUTES.role] as const
 
 const STEPS_BY_ROLE = {
   EMIGRANT: [
@@ -48,4 +48,15 @@ export function pathToStep(
 ) {
   const index = getStepList(role).indexOf(pathname)
   return index === -1 ? null : index + 1
+}
+
+export function nextStep(
+  role: OnboardingRole | null,
+  pathname: OnboardingPath
+) {
+  const current = pathToStep(role, pathname)
+  if (current === null) {
+    throw new Error(`Página ${pathname} não existe nos passos de ${role}`)
+  }
+  return Math.min(current + 1, getStepList(role).length)
 }

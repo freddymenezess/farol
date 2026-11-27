@@ -160,6 +160,14 @@ export function RegisterForm({
           >
             {t("submit")}
           </Button>
+          <div className="flex flex-nowrap items-center gap-3">
+            <Separator className="flex-1" />
+            <p className="text-center text-sm text-muted-foreground">
+              {t("or")}
+            </p>
+            <Separator className="flex-1" />
+          </div>
+          <GoogleButton />
           <p className="self-center text-sm text-muted-foreground">
             {t("hasAccount")}{" "}
             <Link
@@ -169,14 +177,6 @@ export function RegisterForm({
               {t("signIn")}
             </Link>
           </p>
-          <div className="flex flex-nowrap items-center gap-3">
-            <Separator className="flex-1" />
-            <p className="text-center text-sm text-muted-foreground">
-              {t("or")}
-            </p>
-            <Separator className="flex-1" />
-          </div>
-          <GoogleButton />
         </CardFooter>
       </form>
     </Card>

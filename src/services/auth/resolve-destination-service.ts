@@ -1,6 +1,7 @@
-import { getOnboardingState, saveNextInDraft } from "./onboarding-draft-service"
+import { getOnboardingState } from "@/services/onboarding/get-draft-service"
+import { saveNextInDraft } from "@/services/onboarding/save-draft-service"
 import { safeNext } from "@/lib/utils"
-import { stepToPath } from "@/lib/onboarding-draft-steps"
+import { stepToPath } from "@/lib/onboarding-steps"
 
 export async function resolveDestination(
   userId: string,

@@ -96,7 +96,7 @@ model OnboardingDraft {
   userId    String          @id @map("user_id") @db.Uuid
   role      OnboardingRole?
   step      Int
-  data      Json
+  answers      Json
   expiresAt DateTime        @map("expires_at")
 
   user User @relation(fields: [userId], references: [id])

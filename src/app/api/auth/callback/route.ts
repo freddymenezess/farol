@@ -4,7 +4,7 @@ import { getPathname } from "@/i18n/navigation"
 import { createClient } from "@/lib/supabase/server"
 import { resolveLocale } from "@/lib/resolve-locale"
 import { safeNext } from "@/lib/utils"
-import { resolveDestination } from "@/services/auth-service"
+import { resolveDestination } from "@/services/auth/resolve-destination-service"
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)

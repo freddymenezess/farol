@@ -22,10 +22,10 @@ export async function requestPasswordRecoveryAction(
   if (error) {
     console.error("Password recovery error:", error.message)
     if (error.code === "over_email_send_rate_limit") {
-      return { success: false, error: "OVER_EMAIL_SEND_RATE_LIMIT" }
+      return { success: false as const, error: "OVER_EMAIL_SEND_RATE_LIMIT" }
     }
-    return { success: false, error: "SEND_FAILED" }
+    return { success: false as const, error: "SEND_FAILED" }
   }
 
-  return { success: true, data: null }
+  return { success: true as const, data: null }
 }
